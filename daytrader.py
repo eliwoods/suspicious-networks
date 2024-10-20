@@ -1,6 +1,7 @@
 import logging
 import datetime as dt
 import os
+import shutil
 from multiprocessing import Pool
 
 import ffmpeg
@@ -255,7 +256,7 @@ def generate_inplace_mov(name: str, test_pattern: bool = False, num_frames: int 
 
     if cleanup:
         LOG.info('Cleaning up raw frames directory')
-        os.rmdir(output_dir)
+        shutil.rmtree(output_dir)
 
 
 if __name__ == '__main__':
