@@ -17,13 +17,12 @@ LOG = logging.getLogger(__name__)
 COLORBAR_OUTPUT_DIR = OUTPUT_DIR / 'colorbars'
 
 
-def make_inputs(samples: int = 100, phase: float = 0, hue: np.ndarray | None = None) -> pd.DataFrame:
+def make_inputs(samples: int = 100, phase: float = 0, hue: np.ndarray | None = None, sin_mod: float = 1) -> pd.DataFrame:
     x = np.linspace(0, 4 * np.pi, samples)
-    hue_x = np.linspace(0, 2 * np.pi, samples)
-
-    y = np.sin(x + phase)
+    y = np.sin(x / sin_mod + phase + np.pi) * np.sin(x + phase)
 
     if hue is None:
+        hue_x = np.linspace(0, 2 * np.pi, samples)
         hue = np.sin(hue_x + phase)
 
     df = pd.DataFrame({'x': x, 'y': y, 'hue': hue})
@@ -104,13 +103,18 @@ def generate_mov(name: str, test_pattern: bool = False, num_frames: int = 1000, 
     hue_fwd = np.random.choice([0, 1], size=length, p=[0.5, 0.5])
     hue_bwd = np.random.choice([0, 1], size=length, p=[0.5, 0.5])
 
+    # TODO Make these change over time?
+    sin_mod_fwd = 2 * np.pi * np.random.randn() - np.pi
+    sin_mod_bwd = 2 * np.pi * np.random.randn() - np.pi
+
     frames = []
     # TODO add another set of shapes going fwd and backward
+    # TODO fix the figure size based on min/maxes
     for phase_fwd, phase_bwd in zip(phases_fwd, phases_bwd):
         # df_fwd = make_inputs(samples=length, phase=phase_fwd, hue=hue_fwd)
         # df_bwd = make_inputs(samples=length, phase=phase_bwd, hue=hue_bwd)
-        df_fwd = make_inputs(samples=length, phase=phase_fwd)
-        df_bwd = make_inputs(samples=length, phase=phase_bwd)
+        df_fwd = make_inputs(samples=length, phase=phase_fwd, sin_mod=sin_mod_fwd)
+        df_bwd = make_inputs(samples=length, phase=phase_bwd, sin_mod=sin_mod_bwd)
         hue_fwd = np.roll(hue_fwd, shift=1)
         hue_bwd = np.roll(hue_bwd, shift=-1)
         frames.append((df_fwd, df_bwd))
