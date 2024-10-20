@@ -1,6 +1,5 @@
 import logging
 import datetime as dt
-import os
 import shutil
 from multiprocessing import Pool
 
