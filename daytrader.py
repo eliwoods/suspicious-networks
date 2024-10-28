@@ -2,6 +2,7 @@ import logging
 import datetime as dt
 import shutil
 from multiprocessing import Pool
+from pathlib import Path
 
 import ffmpeg
 
@@ -11,12 +12,12 @@ import numpy as np
 import yfinance as yf
 import mplfinance as mpf
 
-from util import OUTPUT_DIR
+from util import BASE_OUTPUT_DIR
 
 LOG = logging.getLogger(__name__)
 
 
-DAY_TRADER_OUTPUT_DIR = OUTPUT_DIR / 'daytrader'
+OUTPUT_DIR = BASE_OUTPUT_DIR / Path(__file__).stem
 
 
 # Style utilities
@@ -134,7 +135,7 @@ def generate_sliding_mov(name: str, test_pattern: bool = False, length: int = 10
     """
     # setup outputs
     name = f'sliding-{name}'
-    output_dir = DAY_TRADER_OUTPUT_DIR / f"raw__{name}_{dt.datetime.now().strftime('%Y%m%dT%H%M%S')}"
+    output_dir = OUTPUT_DIR / f"raw__{name}_{dt.datetime.now().strftime('%Y%m%dT%H%M%S')}"
     output_dir.mkdir()
 
     # Setup styles
@@ -175,7 +176,7 @@ def generate_sliding_mov(name: str, test_pattern: bool = False, length: int = 10
 
     LOG.info('Generating movie')
     mov_name = output_dir.name.split('__')[-1]
-    ffmpeg.input(f'{output_dir}/*.png', pattern_type='glob', framerate=45).output(f'{DAY_TRADER_OUTPUT_DIR}/{mov_name}.mp4').run()
+    ffmpeg.input(f'{output_dir}/*.png', pattern_type='glob', framerate=45).output(f'{OUTPUT_DIR}/{mov_name}.mp4').run()
 
 
 def generate_inplace_mov(name: str, test_pattern: bool = False, num_frames: int = 1000, length: int = 100, num_processes: int = 8, cleanup: bool = True) -> None:
@@ -191,7 +192,7 @@ def generate_inplace_mov(name: str, test_pattern: bool = False, num_frames: int 
     """
     # setup outputs
     name = f'inplace-{name}'
-    output_dir = DAY_TRADER_OUTPUT_DIR / f"raw__{name}_{dt.datetime.now().strftime('%Y%m%dT%H%M%S')}"
+    output_dir = OUTPUT_DIR / f"raw__{name}_{dt.datetime.now().strftime('%Y%m%dT%H%M%S')}"
     output_dir.mkdir()
 
     # Setup data and styles
@@ -251,7 +252,7 @@ def generate_inplace_mov(name: str, test_pattern: bool = False, num_frames: int 
 
     LOG.info('Generating movie')
     mov_name = output_dir.name.split('__')[-1]
-    ffmpeg.input(f'{output_dir}/*.png', pattern_type='glob', framerate=12).output(f'{DAY_TRADER_OUTPUT_DIR}/{mov_name}.mp4').run()
+    ffmpeg.input(f'{output_dir}/*.png', pattern_type='glob', framerate=12).output(f'{OUTPUT_DIR}/{mov_name}.mp4').run()
 
     if cleanup:
         LOG.info('Cleaning up raw frames directory')
@@ -259,5 +260,7 @@ def generate_inplace_mov(name: str, test_pattern: bool = False, num_frames: int 
 
 
 if __name__ == '__main__':
+    from pathlib import Path
     logging.basicConfig(level=logging.INFO)
-    generate_inplace_mov('tri-wavelet', test_pattern=False)
+    # generate_inplace_mov('tri-wavelet', test_pattern=False)
+    print(Path(__file__).stem)

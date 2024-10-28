@@ -1,3 +1,3 @@
 from pathlib import Path
 
-OUTPUT_DIR = Path.cwd().absolute() / 'output'
+BASE_OUTPUT_DIR = Path.cwd().absolute() / 'output'
