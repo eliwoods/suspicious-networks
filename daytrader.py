@@ -233,7 +233,7 @@ def generate_inplace_mov(name: str, test_pattern: bool = False, num_frames: int 
     # See the following for annotated sample lengths
     # /Users/eli/eliwoods/suspicious-networks/output/good-sample-reference-inplace-tri-wavelet_20241019T160221.mp4
     for _length, period, phase, amplitude in zip(even_samples, periods, phases, amplitudes):
-        frames.append(make_inputs(length=58, phase=phase, sigma_scale=1.5, max_amplitude=amplitude))
+        frames.append(make_inputs(length=100, phase=phase, sigma_scale=1.5, max_amplitude=amplitude))
 
     # Get ylims to standardize plots
     ymin = min([f['Low'].min() for f in frames])
@@ -262,5 +262,4 @@ def generate_inplace_mov(name: str, test_pattern: bool = False, num_frames: int 
 if __name__ == '__main__':
     from pathlib import Path
     logging.basicConfig(level=logging.INFO)
-    # generate_inplace_mov('tri-wavelet', test_pattern=False)
-    print(Path(__file__).stem)
+    generate_inplace_mov('tri-wavelet-100', test_pattern=False)
